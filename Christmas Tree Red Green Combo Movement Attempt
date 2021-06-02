@@ -1,0 +1,61 @@
+#include "FastLED.h"
+#define NUM_LEDS 24
+CRGB leds[NUM_LEDS];
+#define PIN 9
+
+const CRGB firstColor = CRGB::Red;
+const CRGB secondColor = CRGB::Green;
+
+void setup()
+{
+  FastLED.addLeds<WS2812B, PIN, GRB>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
+}
+
+// *** REPLACE FROM HERE ***
+void loop() {
+  marqueeEffect();
+  FastLED.show();
+}
+
+
+void showStrip() {
+ #ifdef ADAFRUIT_NEOPIXEL_H
+   // NeoPixel
+   strip.show();
+ #endif
+ #ifndef ADAFRUIT_NEOPIXEL_H
+   // FastLED
+   FastLED.show();
+ #endif
+}
+
+void setPixel(int Pixel, byte red, byte green, byte blue) {
+ #ifdef ADAFRUIT_NEOPIXEL_H
+   // NeoPixel
+   strip.setPixelColor(Pixel, strip.Color(red, green, blue));
+ #endif
+ #ifndef ADAFRUIT_NEOPIXEL_H
+   // FastLED
+   leds[Pixel].r = red;
+   leds[Pixel].g = green;
+   leds[Pixel].b = blue;
+ #endif
+}
+
+void setAll(byte red, byte green, byte blue) {
+  for(int i = 0; i < NUM_LEDS; i++ ) {
+    setPixel(i, red, green, blue);
+  }
+  showStrip();
+}
+
+void marqueeEffect () {
+  for (uint8_t i = 0; i < NUM_LEDS; i++) {
+      leds [i] = firstColor;
+      FastLED.show();
+        for (uint8_t k = i+1; k < NUM_LEDS; k++) {
+          leds [k] = secondColor;
+          FastLED.show();
+  }
+  }
+}
